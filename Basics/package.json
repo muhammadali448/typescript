@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc app.ts && lite-server"
+    "start": "tsc app.ts && lite-server",
+    "dev": "tsc app.ts && node app.js"
   },
   "author": "Muhammad Ali",
   "license": "ISC",
