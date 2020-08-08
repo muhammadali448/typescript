@@ -1,128 +1,69 @@
-abstract class Department {
-    // private name: string;
-    protected employees: string[] = [];
-    static employeePay: number = 2000;
-    // constructor(n: string) {
-    //     this.name = n;
-    // }
-    constructor(protected readonly id: string, private name: string) {
-
-    }
-    public get getName(): string {
-        return this.name
-    }
-    public get getId(): string {
-        return this.id
-    }
-    public addEmployee(name: string) {
-        // this.id = "d2";
-        this.employees.push(name);
-    }
-
-    static employeeStatus(): string {
-        return "Junior";
-    }
-
-    public get getEmployees(): string[] {
-        return this.employees;
-    }
-
-    // describe(this: Department) {
-    //     console.log("Undefined: ", this.name);
-    // }
-    abstract describe(this: Department): void;
-}
-
-class ITDepartment extends Department {
-    admins: string[];
-    constructor(id: string, admins: string[]) {
-        super(id, "IT");
-        this.admins = admins;
-    }
-    describe(this: ITDepartment) {
-        console.log("ITDepartment ID: ", this.id);
-    }
-}
-
-class AccountingDepartment extends Department {
-    private lastReport: string;
-    private static instance: AccountingDepartment;
-    // constructor(id: string, private reports: string[]) {
-    //     super(id, "Accounting");
-    //     this.lastReport = reports[0];
-    // }
-    private constructor(id: string, private reports: string[]) {
-        super(id, "Accounting");
-        this.lastReport = reports[0];
-    }
-
-    static getInstance() {
-        if (this.instance) {
-            return this.instance;
-        }
-        this.instance = new AccountingDepartment("d2", []);
-        return this.instance;
-    }
-
-    describe(this: AccountingDepartment) {
-        console.log("AccountingDepartment ID: ", this.id);
-    }
-    public addReport(reportName: string) {
-        this.reports.push(reportName);
-        this.lastReport = reportName;
-    }
-    public get getReports(): string[] {
-        return this.reports
-    }
-
-    public set setLastReport(v: string) {
-        this.addReport(v);
-    }
-
-    public get getLastReport(): string {
-        if (!this.lastReport) {
-            throw new Error("No report exist");
-        }
-        return this.lastReport;
-    }
-
-    addEmployee(name: string) {
-        if (name === "Reshail Khan") {
-            return;
-        }
-        this.employees.push(name);
-    }
-
-}
-// const department = new Department(); can't create an instance of department
-// const accountingDepartment = new AccountingDepartment("d1", []);
-const accountingDepartment = AccountingDepartment.getInstance();
-accountingDepartment.describe();
-// console.log("Last Report: ", accountingDepartment.getLastReport);
-accountingDepartment.addReport("Fees Report");
-accountingDepartment.addReport("Sports Funds Report");
-console.log(`Department Name (id: ${accountingDepartment.getId}): `, accountingDepartment.getName);
-accountingDepartment.addEmployee("Yasir Abbas");
-accountingDepartment.addEmployee("Muhammad Ali");
-accountingDepartment.addEmployee("Ahad");
-accountingDepartment.addEmployee("Sufiyan");
-accountingDepartment.addEmployee("Ahmed");
-accountingDepartment.addEmployee("Reshail Khan"); // employee not added
-console.log("All Employees income about: ", Department.employeePay);
-console.log(`All employees are ${Department.employeeStatus()} level`);
-console.log("Last Report: ", accountingDepartment.getLastReport);
-accountingDepartment.setLastReport = "Check New Report";
-accountingDepartment.addReport("Examination Fees Report");
-console.log(`Total Employees in ${accountingDepartment.getName} Department(id: ${accountingDepartment.getId}): `, accountingDepartment.getEmployees.length);
-console.log("Employees: ", accountingDepartment.getEmployees);
-console.log("Reports: ", accountingDepartment.getReports);
-// const accountingCpy = {
-//     name: "ali",
-//     describe: accounting.describe
+// interface Person {
+//     name: string;
+//     age: number;
+//     greet(message: string): void;
 // }
-// accountingCpy.describe();
-const idDepart = new ITDepartment("d2", ["Reshail Khan"]);
-idDepart.describe();
-idDepart.addEmployee("Arhama");
-idDepart.addEmployee("Haseeb");
-console.log(idDepart);
+interface Appnamed {
+    readonly appName?: string;
+    outputName?: string;
+}
+interface Greetable extends Appnamed {
+    greet(message: string): void;
+}
+// work same as interface in this case
+// type Person = {
+//     name: string;
+//     age: number;
+//     greet(message: string): void;
+// }
+// let user1: Person;
+// user1 = {
+//     name: "Muhammad Ali",
+//     age: 25,
+//     greet(message) {
+//         console.log(`${message}, ${this.name}`);
+//     }
+// }
+// console.log(`${user1.name}, ${user1.age}`);
+// user1.greet("Hello world");
+
+class Person implements Greetable {
+    private name: string;
+    appName?: string;
+    age: number;
+    constructor(name: string, appName?: string) {
+        this.name = name;
+        if (appName) {
+            this.appName = appName;
+        }
+        this.age = 25;
+    }
+
+    public set setAppName(v: string) {
+        this.appName = v;
+    }
+
+    greet(message: string): void {
+        console.log(`${message}, ${this.name} ${this.appName ? "on " + this.appName : ""}`);
+    }
+}
+
+const user1: Greetable = new Person("Muhammad Ali", "Linkedin");
+const user2: Greetable = new Person("Sufiyan", "Google");
+const user3: Greetable = new Person("Yasir Abbas", "Facebook");
+// user1.appName = "facebook"; // readonly property
+user1.greet("Hello world");
+user2.greet("A.salam");
+user3.greet("Hi");
+
+interface addFunc {
+    (no1: number, no2: number): number;
+}
+
+let add: addFunc;
+
+add = (no1: number, no2: number) => {
+    return no1 + no2;
+}
+
+console.log(`Addition result: ${add(3, 5)} `);
