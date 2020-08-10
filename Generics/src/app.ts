@@ -111,3 +111,23 @@ objectStorage.addItem({ user: "user3" });
 console.log(objectStorage.getItems());
 objectStorage.removeItem({ "user": "user2" });
 console.log(objectStorage.getItems());
+
+interface CourseGoal {
+    title: string;
+    description: string;
+    completionDate: Date;
+}
+
+function createCourseGoal(title: string, description: string, completionDate: Date): CourseGoal {
+    const courseGoal: Partial<CourseGoal> = {};
+    courseGoal.title = title;
+    courseGoal.description = description;
+    courseGoal.completionDate = completionDate;
+    return courseGoal as CourseGoal;
+}
+
+const courseGoal = createCourseGoal("OOP", "Object Oriented Programming", new Date());
+console.log(courseGoal);
+
+const courses: Readonly<string[]> = ["OOP", "CP", "DBMS"];
+// courses.push("EDC"); gives me an error
