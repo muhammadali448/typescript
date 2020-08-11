@@ -1,3 +1,37 @@
+
+interface applyValidate {
+    value: string | number;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+    required?: boolean
+}
+
+function validate(applyValidateInput: applyValidate) {
+    let isValid = true;
+    if (applyValidateInput.required) {
+        isValid = isValid && applyValidateInput.value.toString().trim().length !== 0;
+    }
+    if (applyValidateInput.minLength != null &&
+        typeof applyValidateInput.value === "string") {
+        isValid = isValid && applyValidateInput.value.length >= applyValidateInput.minLength;
+    }
+    if (applyValidateInput.maxLength != null &&
+        typeof applyValidateInput.value === "string") {
+        isValid = isValid && applyValidateInput.value.length <= applyValidateInput.maxLength;
+    }
+    if (applyValidateInput.min != null &&
+        typeof applyValidateInput.value === "number") {
+        isValid = isValid && applyValidateInput.value >= applyValidateInput.min;
+    }
+    if (applyValidateInput.max != null &&
+        typeof applyValidateInput.value === "number") {
+        isValid = isValid && applyValidateInput.value <= applyValidateInput.max;
+    }
+    return isValid;
+}
+
 function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     const adjDescriptor: PropertyDescriptor = {
@@ -9,6 +43,32 @@ function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescrip
     }
     return adjDescriptor;
 }
+
+class ProjectList {
+    templateEl: HTMLTemplateElement;
+    divEl: HTMLDivElement;
+    element: HTMLElement;
+    private type: string
+    constructor(t: "finished" | "active") {
+        this.type = t;
+        this.templateEl = document.getElementById("project-list")! as HTMLTemplateElement;
+        this.divEl = document.getElementById("app")! as HTMLDivElement;
+        const importedNode = document.importNode(this.templateEl.content, true);
+        this.element = importedNode.firstElementChild as HTMLElement;
+        this.element.id = `${this.type}-projects`;
+        this.attach();
+        this.renderContent();
+    }
+    private attach() {
+        this.divEl.insertAdjacentElement("beforeend", this.element);
+    }
+    private renderContent() {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector("ul")!.id = listId;
+        this.element.querySelector("h2")!.textContent = `${this.type.toUpperCase()} PROJECTS`
+    }
+}
+
 class ProjectInput {
     templateEl: HTMLTemplateElement;
     divEl: HTMLDivElement;
@@ -35,10 +95,25 @@ class ProjectInput {
         const title = this.titleInputEl.value;
         const description = this.descriptionInputEl.value;
         const people = this.peopleInputEl.value;
-        if (title.trim().length === 0 ||
-            description.trim().length === 0 ||
-            people.trim().length === 0) {
-            alert("Please fill all fields");
+        const titleValid: applyValidate = {
+            required: true,
+            value: title
+        }
+        const desValid: applyValidate = {
+            required: true,
+            value: description,
+            minLength: 5
+        }
+        const peopleValid: applyValidate = {
+            required: true,
+            value: +people,
+            min: 1,
+            max: 5
+        }
+        if (!validate(titleValid) ||
+            !validate(desValid) ||
+            !validate(peopleValid)) {
+            alert("Please fill all input fields");
         }
         else {
             return [title, description, +people];
@@ -66,3 +141,6 @@ class ProjectInput {
 
 const prjInput = new ProjectInput();
 console.log(prjInput);
+
+const activePrjList = new ProjectList("active");
+const finishedPrjList = new ProjectList("finished");
