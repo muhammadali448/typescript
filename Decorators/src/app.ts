@@ -1,105 +1,74 @@
-console.log("Learning Decorators");
+interface ValidatorConfig {
+    [property: string]: {
+        [validatableProp: string]: string[]; // ['required', 'positive']
+    };
+}
 
-// function logger(constructor: Function) {
-//     console.log("Logger...");
-//     console.log(constructor);
-// }
-// function Logger(logString: string) {
-//     return function (constructor: Function) {
-//         console.log(logString);
-//         console.log(constructor);
-//     }
-// }
+const registeredValidators: ValidatorConfig = {};
 
-function withTemplate(template: string, hookId: string) {
-    return function <T extends { new(...args: any[]): { name: string } }>(originalConstructor: T) {
-        return class extends originalConstructor {
-            constructor(..._: any[]) {
-                super();
-                const el = document.getElementById(hookId);
-                if (el) {
-                    el.innerHTML = template;
-                    // const p = new originalConstructor(); there is no need of it
-                    document.querySelector("p")!.textContent = this.name;
-                }
+function Required(target: any, propName: string) {
+    registeredValidators[target.constructor.name] = {
+        ...registeredValidators[target.constructor.name],
+        [propName]: ['required']
+    };
+}
+
+function PositiveNumber(target: any, propName: string) {
+    console.log(registeredValidators[target.constructor.name]);
+    registeredValidators[target.constructor.name] = {
+        ...registeredValidators[target.constructor.name],
+        [propName]: ['positive']
+    };
+}
+
+function validate(obj: any) {
+    const objValidatorConfig = registeredValidators[obj.constructor.name];
+    console.log(objValidatorConfig);
+    if (!objValidatorConfig) {
+        return true;
+    }
+    let isValid = true;
+    for (const prop in objValidatorConfig) {
+        for (const validator of objValidatorConfig[prop]) {
+            switch (validator) {
+                case 'required':
+                    isValid = isValid && !!obj[prop];
+                    break;
+                case 'positive':
+                    isValid = isValid && obj[prop] > 0;
+                    break;
             }
         }
     }
+    return isValid;
 }
 
-
-// @Logger("PERSON-----LOGGER")
-@withTemplate("<p>Logger Person</p>", "app")
-class Person {
-    name = "ali";
-    constructor() {
-        console.log("creating person object");
-    }
-}
-
-const p1 = new Person();
-p1.name = "ahad"
-console.log(p1);
-
-function log(target: any, propertyName: string | Symbol) {
-    console.log("Property-Decorator");
-    console.log(target, propertyName);
-}
-
-function log2(target: any, name: string, descriptor: PropertyDescriptor) {
-    console.log("Accessor");
-    console.log(target);
-    console.log(name);
-    console.log(descriptor);
-}
-
-function log3(target: any, name: string | Symbol, descriptor: PropertyDescriptor) {
-    console.log("Method");
-    console.log(target);
-    console.log(name);
-    console.log(descriptor);
-}
-
-function log4(target: any, name: string | Symbol, position: number) {
-    console.log("Parameter Decorator");
-    console.log(target);
-    console.log(name);
-    console.log(position);
-}
-
-class Product {
-    @log
+class Course {
+    @Required
     title: string;
-    private _price: number;
-    constructor(title: string, price: number) {
-        this._price = price;
-        this.title = title;
-    }
-    @log2
-    public set setTitle(v: string) {
-        this.title = v;
-    }
+    @PositiveNumber
+    price: number;
 
-    public set setPrice(v: number) {
-        if (v > 0) {
-            this._price = v;
-        }
-        else {
-            throw new Error("Invalid price")
-        }
+    constructor(t: string, p: number) {
+        this.title = t;
+        this.price = p;
     }
-
-    public get getTitle(): string {
-        return this.title
-    }
-
-    public get getPrice(): number {
-        return this._price
-    }
-
-    @log3
-    getPriceWithTax(@log4 tax: number) {
-        return tax * (this._price + 1);
-    }
-
 }
+
+const courseForm = document.querySelector('form')!;
+courseForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const titleEl = document.getElementById('title') as HTMLInputElement;
+    const priceEl = document.getElementById('price') as HTMLInputElement;
+
+    const title = titleEl.value;
+    const price = +priceEl.value;
+
+    const createdCourse = new Course(title, price);
+
+    if (!validate(createdCourse)) {
+        alert('Invalid input, please try again!');
+        return;
+    }
+    console.log(createdCourse);
+});
