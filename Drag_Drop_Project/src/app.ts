@@ -135,7 +135,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>{
     }
     configure(): void {
         prjState.addListener((projects: Project[]) => {
-            const filterProjsects = projects.filter(p => {
+            const filterProjects = projects.filter(p => {
                 if (this.type === "active") {
                     return p.status === ProjectStatus.ACTIVE
                 }
