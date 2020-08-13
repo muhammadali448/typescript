@@ -1,7 +1,7 @@
-import { Component } from "./baseComponent.js";
-import { prjState } from "../state/projectState.js";
-import { validate, applyValidate } from "../utils/validation.js";
-import { AutoBind } from "../decorators/autoBind.js";
+import { Component } from "./baseComponent";
+import { prjState } from "../state/projectState";
+import { validate, applyValidate } from "../utils/validation";
+import { AutoBind } from "../decorators/autoBind";
 export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
     renderContent(): void {
         // throw new Error("Method not implemented.");

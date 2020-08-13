@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./dist/app.js",
-    "dev": "lite-server"
+    "dev": "webpack-dev-server",
+    "build": "webpack",
+    "production": "webpack --config webpack.config.prod.js"
   },
   "keywords": [
     "typescript"
@@ -14,6 +16,12 @@
   "author": "Muhammad Ali",
   "license": "ISC",
   "devDependencies": {
-    "lite-server": "^2.5.4"
+    "clean-webpack-plugin": "^3.0.0",
+    "lite-server": "^2.5.4",
+    "ts-loader": "^8.0.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }
