@@ -1,24 +1,46 @@
-enum FootSize {
-    Small,
-    Medium,
-    Large,
-    XL,
-    XXL
+// Interfaces examples
+
+interface CourseVenue {
+    // Properties
+    city: string;
+    country: string;
 }
 
-let fsize1 = FootSize.Small;
-++fsize1;
-console.log(FootSize[fsize1]); // Medium
+interface CourseParticipant {
+    // Properties
+    name: string;
+}
 
-let fsize2 = FootSize.XL;
---fsize2;
-console.log(FootSize[fsize2]); // Large
---fsize2;
---fsize2;
-console.log(FootSize[fsize2]);
+interface CourseEvent {
+    // Constructor
+    new(): CourseEvent;
+    // Properties
+    currentLocation: CourseVenue;
+    // Methods
+    // bookVenue(venue: CourseVenue);
+    // addDelegate(delegate: CourseParticipant);
+    // removeDelegate(delegate: CourseParticipant);
+}
 
-let fsize3 = FootSize.XXL;
-++fsize3;
-console.log(FootSize[fsize3]); // undefined
+// Create a set of interfaces to describe a vehicle, passengers, location, and destination.
+// Declare properties and methods using type annotations.
+// Declare constructors using the ''new'' keyword.
 
-// Binary Operators
+interface vehicle {
+    carType: string;
+    wheels: number;
+}
+interface passengers {
+    isMale: boolean;
+    noOfSeats: number;
+}
+interface location {
+    address: string
+}
+
+interface Destination {
+    vehicle: vehicle;
+    passengers: passengers;
+    location: location;
+    new(): Destination;
+}
